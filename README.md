@@ -1,138 +1,110 @@
-# Titanic Survival Prediction — Logistic Regression
+# Titanic Survival Prediction
 
+This project is a simple end-to-end machine learning pipeline built on the Kaggle Titanic dataset.  
+The main goal is to practice writing clean, modular ML code and to demonstrate a basic training and tuning workflow.
 
-This project demonstrates an end-to-end machine learning workflow, 
-including exploratory data analysis, feature engineering, pipeline-based modeling, 
-and evaluation on a real-world classification problem.
-
-
- **Kaggle Notebook:** https://www.kaggle.com/code/selimsnmn/titanic-survival-prediction-logistic-regression
-
+I focused on code readability and structure rather than complex modeling.
 
 ---
 
-## Project Summary
+## Project Overview
 
-- **Project Objective:** To predict whether Titanic passengers survived or not.
-- **Prediction Type:** Binary classification (survived = 0 or 1).  
-- **Model:** Logistic Regression classifier.  
-- **Data Source:** Kaggle Titanic dataset.
-
----
-
-## Data Set Description
-
-The dataset contains the following information about the passengers on the Titanic:
-
-- **Survived:** Target variable indicating whether the passenger survived
-(0 = No, 1 = Yes)
-- **Pclass:** Passenger class
-(1 = 1st class, 2 = 2nd class, 3 = 3rd class)
-- **Name:** Full name of the passenger
-- **Sex:** Gender of the passenger
-- **Age:** Age of the passenger in years
-- **SibSp:** Number of siblings or spouses aboard the Titanic
-- **Ticket:** Ticket number
-- **Fare:** Passenger fare
-- **Cabin:** Cabin number assigned to the passenger
-- **Embarked:** Port of embarkation
-(C = Cherbourg, Q = Queenstown, S = Southampton)
-
+In this project, I:
+- Learn how to structure an ML project using Python modules
+- Apply basic feature engineering
+- Train a Logistic Regression model using a scikit-learn Pipeline
+- Optionally tune hyperparameters with RandomizedSearchCV
+- Evaluate the model using common classification metrics
 
 ---
 
-## Exploratory Data Analysis (EDA)
+## File Descriptions
 
-The dataset consists of 12 variables pertaining to 891 passengers. In the initial review, data types, missing values, and general distributions were analyzed.
-
-- **Missing Values:**
-  A high proportion of missing data was detected in the Age and especially Cabin variables. The Cabin variable was excluded from the model.
-- **Survival Distribution:**
-  The number of passengers who did not survive is higher; however, the data set is not excessively unbalanced.
-- **Age Distribution:**
-  It is observed that most passengers are between the ages of 20 and 40. The number of passengers gradually decreases with increasing age.
-- **Survival Count by Sex:**
-  Female passengers have a higher survival rate compared to male passengers. This observation suggests that gender may be an important factor related to survival and may reflect evacuation priorities during disasters.
-- **Age Distribution by Survival Status:**
-  The age distributions for survivors and non-survivors show noticeable overlap. However, younger passengers, particularly children, appear to have a relatively higher likelihood of survival.
-- **Survival Rate by Pclass:**
-  Survival rates vary across passenger classes, with first-class passengers showing higher survival rates compared to second- and third-class passengers. This pattern suggests a possible association between socioeconomic status and survival.
-- **Fare Distribution by Survival Status:**
-  Passengers who paid higher fares tend to exhibit higher survival rates. Fare may therefore serve as a proxy for socioeconomic status and access to safer locations on the ship.
-
-These analyses have guided the data preprocessing and the establishment of the Logistic Regression model.
-
+- `data.py`: loads the dataset and handles basic cleaning  
+- `features.py`: feature engineering (Title extraction, FamilySize, IsAlone, etc.)  
+- `model.py`: defines the ML pipeline and RandomizedSearchCV  
+- `evaluation.py`: evaluation metrics and reports  
+- `utils.py`: helper functions (seed setting, column checks, saving models)  
+- `train.py`: baseline training script  
+- `tune.py`: training with RandomizedSearchCV  
 
 ---
 
-## Feature Engineering
+## Setup
 
-The following feature engineering steps were applied to improve model performance and capture meaningful structures in the data:
+First, create and activate a virtual environment.
 
-- **Title Extraction (Name → Title):**
-  Due to the high cardinality of the `name` variable, it was not used directly; instead, passenger titles (`Mr.`, `Mrs.`, `Miss`, etc.) were extracted.
-  Rare titles were grouped under a single “`Rare`” category to reduce sparsity.
-- **Age Imputation (Group-Based):**
-  Missing age values were imputed using the median age within each title group. This group-based approach helps preserve demographic structure and provides a more realistic imputation compared to global statistics.
-- **Embarked Imputation:**
-  Missing values in the Embarked feature were filled using the most frequent category (mode). This approach is appropriate for categorical variables and helps maintain the original distribution.
-- **TicketGroupSize:**
-  A new feature, TicketGroupSize, was created to capture the number of passengers sharing the same ticket. This feature may reflect group or family travel patterns, which could be associated with survival outcomes.
-- **FamilySize & IsAlone:**
-  `FamilySize` was constructed by combining the number of siblings/spouses and parents/children aboard.
+### Windows
+```powershell```
+python -m venv venv
+venv\Scripts\activate
 
-  Based on this feature, a binary `IsAlone` indicator was derived to distinguish passengers traveling alone from those traveling with family members.
-- **Feature Reduction:**
-  Several features were removed after feature engineering to reduce redundancy and noise. These included identifiers, high-cardinality features, and variables whose information was captured by engineered features.
 
-As a result of these steps, a smaller, more meaningful feature set that is more suitable for the Logistic Regression model has been obtained.
+### macOS / Linux
+python -m venv venv
+source venv/bin/activate
+
+
+#### Install the required packages:
+pip install -r requirements.txt
 
 ---
 
+## How to Run
 
-## Modeling & Evaluation
+#### Baseline training
+Runs the model without hyperparameter tuning.
 
-During the modeling process, scikit-learn Pipeline was used to prevent data leakage and ensure a consistent structure.
-
-- **Feature Separation:**
-  Numeric (`Pclass`, `Age`, `Fare`, `TicketGroupSize`, `FamilySize`, `IsAlone`) and categorical (`Sex`, `Embarked`, `Title`) variables have been defined separately.
-- **Train–Test Split:**
-  The dataset is split into `80%` training and `20%` testing, with reproducibility ensured using `random_state`.
-- **Preprocessing Pipeline:**
-  - One-Hot Encoding for Categorical Variables
-  - Standard Scaling for Numerical Variables
-
-  These steps have been combined into a single pipeline using ColumnTransformer.
-- **Model:**
-  Logistic Regression has been preferred as a powerful and interpretable baseline model for tabular and binary classification problems.
+python -m src.train
 
 
----
+#### Hyperparameter tuning
+Runs RandomizedSearchCV to search for better hyperparameters.
 
-## Model Performance
+python -m src.tune
 
-Basic metrics obtained on the test set:
 
-  - Accuracy: ~0.81
-  - F1-Score: ~0.77
-  - ROC-AUC: ~0.89
+The trained model is saved under:
 
-The confusion matrix shows that the model classifies both survivors and non-survivors with a reasonable balance.
-
+models/titanic_model_tuned.joblib
 
 ---
 
-## Hyperparameter Tuning
+## Model Details
 
-- Method: RandomizedSearchCV
-- Validation: Stratified K-Fold Cross-Validation
-- Result:
-  Hyperparameter optimization has provided limited improvement compared to the baseline model. This indicates that Logistic Regression is already a strong starting model for this problem.
-
+- Model: Logistic Regression
+- Preprocessing:
+  - Numerical features are scaled using StandardScaler
+  - Categorical features are encoded using OneHotEncoder
+- Cross-validation:
+  - StratifiedKFold with 5 splits
+- Hyperparameter tuning:
+  - RandomizedSearchCV
+  - Optimized metric: F1-score
 
 ---
 
-## Conclusion
+## Results
 
-  - The Logistic Regression model produced simple, interpretable, and consistent results on the Titanic dataset.
-  - Demographic and socio-economic characteristics were observed to be decisive for survival. Tree-based models can be evaluated for further performance improvement.
+Example results from a tuned run:
+
+  - Accuracy: ~0.83
+  - ROC-AUC: ~0.87
+
+Results may vary slightly depending on the random split and environment.
+
+---
+
+## Notes
+
+This project was built mainly for learning and portfolio purposes.
+
+I focused on writing clean and readable code and keeping the overall pipeline simple and reproducible
+
+---
+
+## Possible Improvements
+- Try different classification models and compare their performance
+- Add more feature engineering and analyze their impact on the model
+- Perform more systematic hyperparameter tuning
+- Improve model evaluation with cross-validation on the final estimator
