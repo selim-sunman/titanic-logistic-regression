@@ -1,88 +1,120 @@
 # Titanic Survival Prediction
 
-This project is a simple end-to-end machine learning pipeline built on the Kaggle Titanic dataset.  
-The main goal is to practice writing clean, modular ML code and to demonstrate a basic training and tuning workflow.
+This project is a beginner-friendly machine learning pipeline built using the Kaggle Titanic dataset.
 
-I focused on code readability and structure rather than complex modeling.
-
----
-
-## Project Overview
-
-In this project, I:
-- Learn how to structure an ML project using Python modules
-- Apply basic feature engineering
-- Train a Logistic Regression model using a scikit-learn Pipeline
-- Optionally tune hyperparameters with RandomizedSearchCV
-- Evaluate the model using common classification metrics
+The main purpose of this project is to practice core machine learning concepts and to learn how to structure a small ML project using clean and readable Python code.
 
 ---
 
-## File Descriptions
+## Project Goals
 
-- `data.py`: loads the dataset and handles basic cleaning  
-- `features.py`: feature engineering (Title extraction, FamilySize, IsAlone, etc.)  
-- `model.py`: defines the ML pipeline and RandomizedSearchCV  
-- `evaluation.py`: evaluation metrics and reports  
-- `utils.py`: helper functions (seed setting, column checks, saving models)  
-- `train.py`: baseline training script  
-- `tune.py`: training with RandomizedSearchCV  
+In this project, I aimed to:
+
+Understand how to structure a machine learning project using Python modules
+
+Apply basic feature engineering techniques
+
+Train a classification model using scikit-learn
+
+Learn how to evaluate model performance using common metrics
+
+Practice reproducible ML workflows
+
+---
+
+## Dataset
+
+- Dataset: Kaggle Titanic Dataset
+- Task: Binary classification
+- Target variable: Survived
+
+---
+
+
+## Project Structure
+
+src/
+
+├── data.py        # Load and clean the dataset<br>
+├── features.py    # Feature engineering<br>
+├── model.py       # Model and pipeline definition<br>
+├── evaluation.py  # Evaluation utilities<br>
+├── utils.py       # Helper functions<br>
+├── train.py       # Baseline training script<br>
+└── tune.py        # Hyperparameter tuning script<br>
+
+---
+
+## Features
+
+Some simple feature engineering steps include:
+- Extracting passenger titles from names
+- Creating FamilySize and IsAlone features
+- Encoding categorical variables
+- Scaling numerical variables
+
+
+---
+
+## Model
+
+- Model used: Logistic Regression
+- Preprocessing:
+  - Numerical features are scaled using StandardScaler
+  - Categorical features are encoded using OneHotEncoder
+- Training:
+  - StratifiedKFold cross-validation
+  - Optional hyperparameter tuning using RandomizedSearchCV
+- Optimization metric: F1-score
+
+Logistic Regression was chosen as a simple and interpretable baseline model.
+
 
 ---
 
 ## Setup
 
-First, create and activate a virtual environment.
+Create and activate a virtual environment.
 
 ### Windows
-```powershell```
+
+```
 python -m venv venv
 venv\Scripts\activate
+```
 
 
 ### macOS / Linux
+```
 python -m venv venv
 source venv/bin/activate
-
+```
 
 #### Install the required packages:
+```
 pip install -r requirements.txt
-
+```
 ---
 
 ## How to Run
 
-#### Baseline training
-Runs the model without hyperparameter tuning.
-
+### Train baseline model
+```
 python -m src.train
+```
 
-
-#### Hyperparameter tuning
-Runs RandomizedSearchCV to search for better hyperparameters.
-
+### Train model with hyperparameter tuning
+```
 python -m src.tune
+```
 
-
-The trained model is saved under:
-
+#### The trained model is saved under:
+```
 models/titanic_model_tuned.joblib
+```
 
 ---
 
-## Model Details
-
-- Model: Logistic Regression
-- Preprocessing:
-  - Numerical features are scaled using StandardScaler
-  - Categorical features are encoded using OneHotEncoder
-- Cross-validation:
-  - StratifiedKFold with 5 splits
-- Hyperparameter tuning:
-  - RandomizedSearchCV
-  - Optimized metric: F1-score
-
----
 
 ## Results
 
@@ -91,15 +123,15 @@ Example results from a tuned run:
   - Accuracy: ~0.83
   - ROC-AUC: ~0.87
 
-Results may vary slightly depending on the random split and environment.
+Results may vary depending on the random seed and data split.
 
 ---
 
 ## Notes
 
-This project was built mainly for learning and portfolio purposes.
+This project was created for learning and portfolio purposes.
 
-I focused on writing clean and readable code and keeping the overall pipeline simple and reproducible
+The focus is on code clarity, project structure, and understanding the end-to-end machine learning workflow rather than achieving the best possible model performance.
 
 ---
 
